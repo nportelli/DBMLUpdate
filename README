@@ -1,0 +1,6 @@
+A very simple DBML Update add-in. Fixes all existing tables in a DBML to match what is currently in the database. 
+Adds/Removes columns 
+Updates existing columns without messing up any properties already set in the DBML file, that aren't related to the
+database column (e.g. Access modifiers)
+
+Working on adding the ability to update relationships between tables as well.

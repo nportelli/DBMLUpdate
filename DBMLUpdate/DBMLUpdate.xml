@@ -1,0 +1,385 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DBMLUpdate</name>
+    </assembly>
+    <members>
+        <member name="T:DBMLUpdate.Connect">
+            <summary>The object for implementing an Add-in.</summary>
+            <seealso class='IDTExtensibility2' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.#ctor">
+            <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
+        </member>
+        <member name="M:DBMLUpdate.Connect.OnConnection(System.Object,Extensibility.ext_ConnectMode,System.Object,System.Array@)">
+            <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>
+            <param term='application'>Root object of the host application.</param>
+            <param term='connectMode'>Describes how the Add-in is being loaded.</param>
+            <param term='addInInst'>Object representing this Add-in.</param>
+            <seealso class='IDTExtensibility2' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.OnDisconnection(Extensibility.ext_DisconnectMode,System.Array@)">
+            <summary>Implements the OnDisconnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being unloaded.</summary>
+            <param term='disconnectMode'>Describes how the Add-in is being unloaded.</param>
+            <param term='custom'>Array of parameters that are host application specific.</param>
+            <seealso class='IDTExtensibility2' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.OnAddInsUpdate(System.Array@)">
+            <summary>Implements the OnAddInsUpdate method of the IDTExtensibility2 interface. Receives notification when the collection of Add-ins has changed.</summary>
+            <param term='custom'>Array of parameters that are host application specific.</param>
+            <seealso class='IDTExtensibility2' />		
+        </member>
+        <member name="M:DBMLUpdate.Connect.OnStartupComplete(System.Array@)">
+            <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
+            <param term='custom'>Array of parameters that are host application specific.</param>
+            <seealso class='IDTExtensibility2' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.OnBeginShutdown(System.Array@)">
+            <summary>Implements the OnBeginShutdown method of the IDTExtensibility2 interface. Receives notification that the host application is being unloaded.</summary>
+            <param term='custom'>Array of parameters that are host application specific.</param>
+            <seealso class='IDTExtensibility2' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.QueryStatus(System.String,EnvDTE.vsCommandStatusTextWanted,EnvDTE.vsCommandStatus@,System.Object@)">
+            <summary>Implements the QueryStatus method of the IDTCommandTarget interface. This is called when the command's availability is updated</summary>
+            <param term='commandName'>The name of the command to determine state for.</param>
+            <param term='neededText'>Text that is needed for the command.</param>
+            <param term='status'>The state of the command in the user interface.</param>
+            <param term='commandText'>Text requested by the neededText parameter.</param>
+            <seealso class='Exec' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.Exec(System.String,EnvDTE.vsCommandExecOption,System.Object@,System.Object@,System.Boolean@)">
+            <summary>Implements the Exec method of the IDTCommandTarget interface. This is called when the command is invoked.</summary>
+            <param term='commandName'>The name of the command to execute.</param>
+            <param term='executeOption'>Describes how the command should be run.</param>
+            <param term='varIn'>Parameters passed from the caller to the command handler.</param>
+            <param term='varOut'>Parameters passed from the command handler to the caller.</param>
+            <param term='handled'>Informs the caller if the command was handled or not.</param>
+            <seealso class='Exec' />
+        </member>
+        <member name="M:DBMLUpdate.Connect.UpdateStatus(EnvDTE.OutputWindowPane,EnvDTE.StatusBar,System.String)">
+            <summary>
+            Updates the statusbar and output window with the same message
+            </summary>
+            <param name="output">The output pane</param>
+            <param name="status">The status bar</param>
+            <param name="text">The message to send to both</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.#ctor(System.String,EnvDTE.ProjectItem)">
+            <summary>
+            Initializes the document
+            </summary>
+            <param name="fileName">The file name of the dbml document</param>
+            <param name="projectItem">The documents project item</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.DBUpdate(EnvDTE.OutputWindowPane)">
+            <summary>
+            Updates the DBML information
+            </summary>
+            <param name="output">The output window to report status</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.CreateDBML(System.String,EnvDTE.OutputWindowPane)">
+            <summary>
+            Creates a new DBML file with the updates
+            </summary>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.ImportNode(System.Xml.XmlNode,System.Boolean)">
+            <summary>
+            Imports a node to the new document
+            </summary>
+            <param name="node">The node to import</param>
+            <param name="deep">If we import child nodes as well</param>
+            <returns>The imported node</returns>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.AddElement(System.String)">
+            <summary>
+            Adds an element to the new document
+            </summary>
+            <param name="name">The name of the element</param>
+            <returns>The new node</returns>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.AddNodes(System.Xml.XmlElement,System.Xml.XmlNodeList,System.String[])">
+            <summary>
+            Adds nodes from the old document to the new document, with a parent element
+            </summary>
+            <param name="e">The parent element</param>
+            <param name="nodes">The nodes to add</param>
+            <param name="excludes">An array of the names of nodes to exclude</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.AddAttribute(System.Xml.XmlElement,System.String,System.String)">
+            <summary>
+            Creates an attribute on the new document, and adds it to the element
+            </summary>
+            <param name="e">The element to add the attribute to</param>
+            <param name="name">The name of the attribute</param>
+            <param name="value">The value of the attribute</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLDoc.AddAttributes(System.Xml.XmlElement,System.Xml.XmlAttributeCollection,System.String[])">
+            <summary>
+            Adds a list of attributes on the new document to an element
+            </summary>
+            <param name="e">The element to add the attributes to</param>
+            <param name="attrs">The list of attributes to add</param>
+            <param name="excludes">The names of attributes to exclude from the list</param>
+        </member>
+        <member name="P:DBMLUpdate.DBMLDoc.TableCount">
+            <summary>
+            The number of tables in the file
+            </summary>
+        </member>
+        <member name="T:DBMLUpdate.DBMLColumn">
+            <summary>
+            The details of columns within each table
+            </summary>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.#ctor(System.Xml.XmlElement)">
+            <summary>
+            Creates a DBML column based on the information held in the Xml Element
+            </summary>
+            <param name="e">The Xml element holding the details of a column</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.#ctor(System.Data.DataRow)">
+            <summary>
+            Create a DBML column based of the information held in the datarow
+            </summary>
+            <param name="dr">The datarow holding the details of a column</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.Update(DBMLUpdate.DBMLColumn)">
+            <summary>
+            Updates the details of a column to match those in the database
+            </summary>
+            <param name="col"></param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.CreateDBML(DBMLUpdate.DBMLDoc)">
+            <summary>
+            Creates an Xml Element with the details of the column for a new DBML file
+            </summary>
+            <param name="doc">The parent document</param>
+            <returns>An Xml Element cotaining the details of the column</returns>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.Match(DBMLUpdate.DBMLColumn)">
+            <summary>
+            Does a quick name match between columns
+            </summary>
+            <param name="c">The column to match with</param>
+            <returns>True if the names match</returns>
+        </member>
+        <member name="M:DBMLUpdate.DBMLColumn.CompareTo(System.Object)">
+            <summary>
+            Compare interface for sorting
+            </summary>
+            <param name="obj">The obj to compare to</param>
+        </member>
+        <member name="P:DBMLUpdate.DBMLColumn.Found">
+            <summary>
+            Returns true if the column is found in the database
+            </summary>
+        </member>
+        <member name="T:DBMLUpdate.RowRead">
+            <summary>
+            Helper class turns row values into the correct object types
+            </summary>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToBool(System.String)">
+            <summary>
+            Converts a row value to a boolean
+            </summary>
+            <param name="column">The column the value is on</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToBool(System.String,System.Boolean)">
+            <summary>
+            Converts a row value to a boolean
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToBoolNull(System.String)">
+            <summary>
+            Converts a row value to a nullable boolean
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>Nullable(Of Bool)</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToByte(System.String,System.Byte)">
+            <summary>
+            Converts a row value to a byte
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+            <returns>Byte</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToByteNull(System.String)">
+            <summary>
+            Converts a row to the nullable byte
+            </summary>
+            <param name="column">The Column the value is in</param>
+            <returns>Byte?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToBytes(System.String,System.Byte[])">
+            <summary>
+            Converts a row value to a byte array
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if column doesn't exist or is null</param>
+            <returns>Byte()</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDateTime(System.String,System.DateTime)">
+            <summary>
+            Converts a row value to a DateTime
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+            <returns>DateTime</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDateTimeNull(System.String)">
+            <summary>
+            Converts a row value to a nullable datetime
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>DateTime?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDbl(System.String,System.Double)">
+            <summary>
+            Converts a row value to a double
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+            <returns>Double</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDblNull(System.String)">
+            <summary>
+            Converts a row to the nullable double
+            </summary>
+            <param name="column">The Column the value is in</param>
+            <returns>Double?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDec(System.String,System.Decimal)">
+            <summary>
+            Converts a row value to a decimal
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+            <returns>Decimal</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToDecNull(System.String)">
+            <summary>
+            Converts a row valut to a nullable decimal
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>Decimal?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToGUID(System.String)">
+            <summary>
+            Converts a row value to a guid
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>Guid</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToGUIDNull(System.String)">
+            <summary>
+            Converts a row value to a nullable guid
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>Guid?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToInt(System.String)">
+            <summary>
+            Converts a row value to an integer
+            </summary>
+            <param name="column">The column the value is on</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToInt(System.String,System.Int32)">
+            <summary>
+            Converts a row value to an integer
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToIntNull(System.String)">
+            <summary>
+            Converts a row to the nullable integer
+            </summary>
+            <param name="column">The Column the value is in</param>
+            <returns>Integer?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToStr(System.String)">
+            <summary>
+            Converts a row value to a string
+            </summary>
+            <param name="column">The column the value is on</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToStr(System.String,System.String)">
+            <summary>
+            Converts a row value to a string
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToTimeSpan(System.String)">
+            <summary>
+            Converts a row value to a TimeSpan
+            </summary>
+            <param name="column">The column the value is in</param>
+            <returns>TimeSpan</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToTimeSpan(System.String,System.TimeSpan)">
+            <summary>
+            Converts a row value to a TimeSpan
+            </summary>
+            <param name="column">The column the value is in</param>
+            <param name="defaultValue">The default value to use of the value doesn't exist or is null</param>
+            <returns>TimeSpan</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToTimeSpanNull(System.String)">
+            <summary>
+            Converts a row value to a nullable timespan
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>TimeSpan?</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToType``1(System.String,``0)">
+            <summary>
+            Converts a row value to a Type T
+            </summary>
+            <param name="column">The column the value is on</param>
+            <param name="defaultValue">The default value to use if the value doesn't exist or is null</param>
+            <returns>T</returns>
+        </member>
+        <member name="M:DBMLUpdate.RowRead.ToNullable``1(System.String)">
+            <summary>
+            Converts a row value to a type Nullable(Of T)
+            </summary>
+            <param name="column">The column the value is on</param>
+            <returns>T</returns>
+        </member>
+        <member name="T:DBMLUpdate.DBMLTable">
+            <summary>
+            Handles the details for each table in the dbml file
+            </summary>
+        </member>
+        <member name="M:DBMLUpdate.DBMLTable.#ctor(DBMLUpdate.DBMLDoc,System.Xml.XmlElement)">
+            <summary>
+            Creates a DBMLTable for a document, with the details held in xml element
+            </summary>
+            <param name="doc">The DBMLDocument this table belongs to</param>
+            <param name="e">The XmlElement containing the details of the table</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLTable.DBUpdate(System.Data.SqlClient.SqlConnection)">
+            <summary>
+            Updates the table with information from the sql connection
+            </summary>
+            <param name="conn">The sql Connection</param>
+        </member>
+        <member name="M:DBMLUpdate.DBMLTable.CreateDBML(DBMLUpdate.DBMLDoc)">
+            <summary>
+            Creates an Xml element with the details of the table
+            </summary>
+            <param name="doc">The parent doc</param>
+            <returns>XmlElement for the new document</returns>
+        </member>
+        <member name="P:DBMLUpdate.DBMLTable.Name">
+            <summary>
+            The name of the table
+            </summary>
+        </member>
+    </members>
+</doc>
