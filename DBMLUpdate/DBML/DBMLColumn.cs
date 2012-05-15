@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Data;
 using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Xml;
 
 namespace DBMLUpdate
 {
@@ -21,8 +19,9 @@ namespace DBMLUpdate
         {
             _elem = e;
             _name = e.GetAttribute("Name");
-            if(string.IsNullOrEmpty(_name))
+            if (string.IsNullOrEmpty(_name))
                 throw new ArgumentException("Column has no name");
+            _clrType = e.GetAttribute("Type");
             _found = false;
         }
 
@@ -42,7 +41,7 @@ namespace DBMLUpdate
             _canBeNull = rr.ToBool("AllowsNull");
             _isPrimaryKey = rr.ToBool("PrimaryKey");
             _dbGenerated = rr.ToBool("HasDefault");
-            _position = rr.ToInt("OrdinalPosition");
+            _position = rr.ToInt("ORDINAL_POSITION");
             _found = true;
         }
 
@@ -76,20 +75,20 @@ namespace DBMLUpdate
         /// <returns>An Xml Element cotaining the details of the column</returns>
         public XmlElement CreateDBML(DBMLDoc doc)
         {
-            if(!_found)
+            if (!_found)
                 return null;
 
             XmlElement col = doc.AddElement("Column");
             doc.AddAttribute(col, "Name", _name);
             doc.AddAttribute(col, "Type", clrType);
             doc.AddAttribute(col, "DbType", dbType);
-            if(_isPrimaryKey)
+            if (_isPrimaryKey)
                 doc.AddAttribute(col, "IsPrimaryKey", "true");
-            if(_isIdentity || _dbGenerated)
+            if (_isIdentity || _dbGenerated)
                 doc.AddAttribute(col, "IsDbGenerated", "true");
             doc.AddAttribute(col, "CanBeNull", _canBeNull ? "true" : "false");
 
-            if(_elem != null)
+            if (_elem != null)
                 doc.AddAttributes(col, _elem.Attributes, COL_KNOWNATTR);
 
             return col;
@@ -102,7 +101,7 @@ namespace DBMLUpdate
         /// <returns>True if the names match</returns>
         public bool Match(DBMLColumn c)
         {
-            if(_name == c._name || _name == ("[" + c._name + "]"))
+            if (_name == c._name || _name == ("[" + c._name + "]"))
                 return true;
             else
                 return false;
@@ -114,7 +113,7 @@ namespace DBMLUpdate
         /// <param name="obj">The obj to compare to</param>
         public int CompareTo(object obj)
         {
-            if(obj is DBMLColumn)
+            if (obj is DBMLColumn)
             {
                 DBMLColumn col = obj as DBMLColumn;
                 return Comparer.Default.Compare(_position, col._position);
@@ -127,56 +126,60 @@ namespace DBMLUpdate
         {
             get
             {
-                string netType = string.Empty;
-                switch(_dbType.ToLower())
+                if (string.IsNullOrEmpty(_clrType) || _clrType.StartsWith("System."))
                 {
-                    case "bit": return "System.Boolean";
-                    case "tinyint": return "System.Byte";
-                    case "smallint": return "System.Int16";
-                    case "int": return "System.Int32";
-                    case "bigint": return "System.Int64";
+                    switch (_dbType.ToLower())
+                    {
+                        case "bit": return "System.Boolean";
+                        case "tinyint": return "System.Byte";
+                        case "smallint": return "System.Int16";
+                        case "int": return "System.Int32";
+                        case "bigint": return "System.Int64";
 
-                    case "money":
-                    case "smallmoney":
-                    case "numeric":
-                    case "decimal": return "System.Decimal";
+                        case "money":
+                        case "smallmoney":
+                        case "numeric":
+                        case "decimal": return "System.Decimal";
 
-                    case "float": return "System.Double";
-                    case "real": return "System.Single";
+                        case "float": return "System.Double";
+                        case "real": return "System.Single";
 
-                    case "date":
-                    case "datetime":
-                    case "smalldatetime":
-                    case "datetime2": return "System.DateTime";
+                        case "date":
+                        case "datetime":
+                        case "smalldatetime":
+                        case "datetime2": return "System.DateTime";
 
-                    case "time": return "System.TimeSpan";
+                        case "time": return "System.TimeSpan";
 
-                    case "datetimeoffset": return "System.DateTimeOffset";
+                        case "datetimeoffset": return "System.DateTimeOffset";
 
-                    case "nvarchar":
-                    case "varchar":
-                    case "ntext":
-                    case "text": return "System.String";
+                        case "nvarchar":
+                        case "varchar":
+                        case "ntext":
+                        case "text": return "System.String";
 
-                    case "nchar":
-                    case "char":
-                        if(_maxLen == 1)
-                            return "System.Char";
-                        else
-                            return "System.String";
+                        case "nchar":
+                        case "char":
+                            if (_maxLen == 1)
+                                return "System.Char";
+                            else
+                                return "System.String";
 
-                    case "binary":
-                    case "varbinary":
-                    case "image": return "System.Data.Linq.Binary";
+                        case "binary":
+                        case "varbinary":
+                        case "image": return "System.Data.Linq.Binary";
 
-                    case "timestamp": return "System.Data.Linq.Binary";
-                    case "hierarchid": return "System.String";
-                    case "uniqueidentifier": return "System.Guid";
-                    case "sql_variant": return "System.Object";
-                    case "xml": return "System.Xml.Linq.XElement";
+                        case "timestamp": return "System.Data.Linq.Binary";
+                        case "hierarchid": return "System.String";
+                        case "uniqueidentifier": return "System.Guid";
+                        case "sql_variant": return "System.Object";
+                        case "xml": return "System.Xml.Linq.XElement";
+                    }
+
+                    return "System.String";
                 }
-
-                return "System.String";
+                else
+                    return _clrType;
             }
         }
 
@@ -185,7 +188,7 @@ namespace DBMLUpdate
             get
             {
                 string rst = string.Empty;
-                switch(_dbType.ToLower())
+                switch (_dbType.ToLower())
                 {
                     case "sql_variant":
                         rst = "Variant";
@@ -222,6 +225,7 @@ namespace DBMLUpdate
         private string _name;
         private XmlElement _elem;
         private string _dbType;
+        private string _clrType;
         private int _maxLen;
         private int _precision;
         private int _scale;
@@ -239,9 +243,9 @@ namespace DBMLUpdate
     {
         public DBMLColumn MatchCol(DBMLColumn column)
         {
-            foreach(DBMLColumn c in this)
+            foreach (DBMLColumn c in this)
             {
-                if(c.Match(column))
+                if (c.Match(column))
                     return c;
             }
 
